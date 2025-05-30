@@ -28,88 +28,93 @@
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
       }
+      .project-hover:hover {
+        transform: scale(1.02);
+        transition: transform 0.2s ease;
+      }
     </style>
   </head>
   <body>
     <div id="app" class="min-h-screen bg-gray-100">
       <header
-        class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-8 shadow-lg sticky top-0 z-10"
+        class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-4 shadow-lg sticky top-0 z-10"
       >
-        <div class="container mx-auto flex justify-between items-center">
-          <div class="flex items-center space-x-4">
-            <h1 class="text-4xl font-bold">{{ title }}</h1>
+        <div class="container mx-auto flex flex-col items-center sm:flex-row sm:justify-between">
+          <div class="flex items-center space-x-3 mb-3 sm:mb-0">
+            <h1 class="text-2xl sm:text-3xl font-bold">{{ title }}</h1>
             <span
-              class="bg-yellow-400 text-gray-800 text-sm font-medium px-3 py-1 rounded-full"
-              title="This portfolio is under construction"
+              class="bg-yellow-400 text-gray-800 text-xs sm:text-sm font-medium px-2 py-1 rounded-full"
               >Beta</span
             >
           </div>
-          <nav>
+          <nav class="flex flex-wrap justify-center gap-2 sm:gap-4">
             <a
               v-for="link in navLinks"
               :href="link.url"
-              class="mr-6 text-lg font-medium hover:text-blue-200 transition"
+              class="text-sm sm:text-base font-medium hover:text-blue-200 transition"
               >{{ link.name }}</a
             >
           </nav>
         </div>
       </header>
-      <main class="container mx-auto p-8">
-        <section class="mb-16" id="about">
-          <h2 class="text-3xl font-bold mb-6 text-gray-800">About Me</h2>
-          <p class="text-gray-700 text-lg leading-relaxed mb-4">{{ about }}</p>
-          <p class="text-gray-700 text-lg leading-relaxed">
+      <main class="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+        <section class="mb-10 sm:mb-12" id="about">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">About Me</h2>
+          <p class="text-gray-700 text-sm sm:text-base leading-relaxed mb-3">{{ about }}</p>
+          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
             I specialize in creating user-friendly applications with modern JavaScript frameworks.
             My goal is to write clean, efficient code while continuously learning new technologies.
             This portfolio was crafted with assistance from Grok by xAI, helping me focus on
             showcasing my projects effectively.
           </p>
         </section>
-        <section class="mb-16" id="skills">
-          <h2 class="text-3xl font-bold mb-6 text-gray-800">Skills</h2>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section class="mb-10 sm:mb-12" id="skills">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">Skills</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
             <span
               v-for="skill in skills"
-              class="bg-blue-100 text-blue-800 text-center py-3 rounded-lg font-medium text-base hover:bg-blue-200 transition"
+              class="bg-blue-100 text-blue-800 text-center py-2 rounded-lg font-medium text-xs sm:text-sm hover:bg-blue-200 transition"
               >{{ skill }}</span
             >
           </div>
         </section>
-        <section class="mb-16" id="projects">
-          <h2 class="text-3xl font-bold mb-6 text-gray-800">Projects</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section class="mb-10 sm:mb-12" id="projects">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">Projects</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div
               v-for="project in projects"
-              class="bg-white border p-6 rounded-lg shadow-md hover:shadow-xl transition"
+              class="bg-white border p-4 sm:p-5 rounded-lg shadow-md project-hover"
             >
-              <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ project.name }}</h3>
-              <p class="text-gray-600 text-base mb-4">{{ project.description }}</p>
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
+                {{ project.name }}
+              </h3>
+              <p class="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3">{{ project.description }}</p>
               <a
                 :href="project.link"
-                class="text-blue-600 hover:text-blue-800 font-medium text-base"
+                class="text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm"
                 >View on GitHub</a
               >
             </div>
           </div>
         </section>
-        <section class="mb-16" id="contact">
-          <h2 class="text-3xl font-bold mb-6 text-gray-800">Contact</h2>
-          <p class="text-gray-700 text-lg mb-4">
+        <section class="mb-10 sm:mb-12" id="contact">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">Contact</h2>
+          <p class="text-gray-700 text-sm sm:text-base mb-3">
             Interested in collaborating or learning more about my work? Reach out through the links
             below.
           </p>
-          <div class="flex space-x-4">
+          <div class="flex flex-wrap gap-3 sm:gap-4">
             <a
               v-for="contact in contacts"
               :href="contact.url"
-              class="text-blue-600 hover:text-blue-800 font-medium text-base"
+              class="text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm"
               >{{ contact.name }}</a
             >
           </div>
         </section>
       </main>
-      <footer class="bg-gray-900 text-white p-6 text-center">
-        <p class="text-base">
+      <footer class="bg-gray-900 text-white p-4 sm:p-6 text-center">
+        <p class="text-xs sm:text-sm">
           © {{ new Date().getFullYear() }}
           <a href="https://github.com/latefinal" class="hover:text-blue-300">Andrew (latefinal)</a>
           | Built with help from Grok by xAI
