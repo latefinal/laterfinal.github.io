@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth">
   <head>
-    <!-- Meta tags for character encoding and responsive viewport -->
+    <!-- Meta tags for encoding and responsive viewport -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ config.title }}</title>
@@ -26,6 +26,8 @@
           'Inter',
           sans-serif;
         font-weight: 400;
+        margin: 0;
+        overflow-x: hidden;
       }
       h1,
       h2,
@@ -34,45 +36,202 @@
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
       }
-      /* Hover effect for project cards */
-      .project-hover:hover {
-        transform: scale(1.02);
+      /* Hover effects for project and profile cards */
+      .project-hover:hover,
+      .card-hover:hover {
+        transform: scale(1.05);
         transition: transform 0.2s ease;
+      }
+      /* Animation for cards */
+      .fade-enter-active {
+        transition: opacity 0.5s ease;
+      }
+      .fade-enter-from {
+        opacity: 0;
+      }
+      /* Fixed size for contact cards */
+      .contact-card {
+        height: 5rem;
+        min-width: 14rem;
+        width: 14rem;
+      }
+      /* Hover effect for icon buttons */
+      .icon-button:hover {
+        background-color: #dbeafe;
+        transform: scale(1.1);
+        transition: all 0.2s ease;
+      }
+      /* Active state for navigation buttons */
+      .icon-button.active {
+        background-color: #dbeafe;
+      }
+      /* Full-screen sections with snap scrolling */
+      main {
+        scroll-snap-type: y mandatory;
+        overflow-y: scroll;
+        height: 100vh;
+      }
+      section {
+        scroll-snap-align: center;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 2rem;
+        position: relative;
+      }
+      /* Footer bar style within Contact section */
+      .footer-bar {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+      }
+      /* Prevent horizontal overflow in content containers */
+      .content-container {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      /* Horizontal scrolling for projects with hidden scrollbar */
+      .projects-scroll {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        width: 100%;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+      .projects-scroll::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
+      .project-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-width: 300px;
+        scroll-snap-align: start;
+        padding: 0.5rem; /* Prevent clipping on scale */
+      }
+      /* Fixed size for project cards */
+      .project-card {
+        height: 12rem; /* h-48 */
+        width: 18rem; /* w-72 */
+        overflow: hidden;
+      }
+      /* Horizontal scrolling for skills with hidden scrollbar */
+      .skills-scroll {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        width: 100%;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+      .skills-scroll::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
+      .skill-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-width: 300px;
+        scroll-snap-align: start;
+        padding: 0.5rem; /* Prevent clipping on scale */
+      }
+      .skill-card {
+        min-width: 16rem; /* w-64 */
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
       }
     </style>
   </head>
   <body>
-    <!-- Main app container with Vue binding -->
+    <!-- Main app container -->
     <div id="app" class="min-h-screen" :style="{ backgroundColor: theme.bg }">
-      <!-- Header with navigation and Beta flag -->
-      <header
-        :style="{ background: theme.primaryBg, color: theme.textSecondary }"
-        class="p-4 shadow-lg sticky top-0 z-10"
+      <!-- Navigation: Icon buttons in a vertical column on the right-middle -->
+      <nav
+        class="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-4"
       >
-        <div class="container mx-auto flex flex-col items-center sm:flex-row sm:justify-between">
-          <div class="flex items-center space-x-3 mb-3 sm:mb-0">
-            <h1 class="text-2xl sm:text-3xl font-bold">{{ config.title }}</h1>
-            <span
-              class="bg-yellow-400 text-gray-800 text-xs sm:text-sm font-medium px-2 py-1 rounded-full"
-              >Beta</span
-            >
-          </div>
-          <!-- Navigation links -->
-          <nav class="flex flex-wrap justify-center gap-2 sm:gap-4">
-            <a
-              v-for="link in config.navLinks"
-              :href="link.url"
-              class="text-sm sm:text-base font-medium"
-              :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
-              >{{ link.name }}</a
-            >
-          </nav>
-        </div>
-      </header>
+        <a
+          v-for="link in config.navLinks"
+          :href="link.url"
+          class="icon-button p-2 rounded-full bg-white bg-opacity-80 shadow-md"
+          :class="{ 'active': currentSection === link.url.slice(1) }"
+          :style="{ color: theme.textPrimary }"
+        >
+          <svg
+            v-if="link.name === 'About'"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          <svg
+            v-if="link.name === 'Projects'"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            />
+          </svg>
+          <svg
+            v-if="link.name === 'Skills'"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+          <svg
+            v-if="link.name === 'Contact'"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            />
+          </svg>
+        </a>
+      </nav>
       <!-- Main content area -->
-      <main class="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
-        <!-- About section -->
-        <section class="mb-10 sm:mb-12" id="about">
+      <main ref="main">
+        <!-- About section (first section) -->
+        <section id="about" class="content-container">
+          <h1
+            class="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4"
+            :style="{ color: theme.textPrimary }"
+          >
+            {{ config.title }}
+          </h1>
           <h2
             class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
             :style="{ color: theme.textPrimary }"
@@ -87,96 +246,150 @@
             {{ paragraph }}
           </p>
         </section>
-        <!-- Skills section with categorized skills -->
-        <section class="mb-10 sm:mb-12" id="skills">
-          <h2
-            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
-            :style="{ color: theme.textPrimary }"
-          >
-            Skills
-          </h2>
-          <div v-for="category in config.skillCategories" :key="category.name" class="mb-6">
-            <h4 class="text-lg sm:text-xl font-semibold mb-2" :style="{ color: theme.textPrimary }">
-              {{ category.name }}
-            </h4>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
-              <span
-                v-for="skill in category.skills"
-                :style="{ backgroundColor: theme.skillBg }"
-                class="text-blue-800 text-center py-2 rounded-lg font-medium text-xs sm:text-sm hover:bg-blue-200 transition"
-                >{{ skill }}</span
-              >
-            </div>
-          </div>
-        </section>
-        <!-- Projects section with cards -->
-        <section class="mb-10 sm:mb-12" id="projects">
+        <!-- Projects section with horizontal scrolling, 2 projects per column -->
+        <section id="projects" class="content-container">
           <h2
             class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
             :style="{ color: theme.textPrimary }"
           >
             Projects
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div
-              v-for="project in config.projects"
-              class="bg-white border p-4 sm:p-5 rounded-lg shadow-md project-hover"
-            >
-              <h3
-                class="text-lg sm:text-xl font-semibold mb-2"
-                :style="{ color: theme.textPrimary }"
+          <div class="projects-scroll">
+            <div v-for="i in Math.ceil(config.projects.length / 2)" :key="i" class="project-column">
+              <div
+                v-for="project in config.projects.slice((i-1)*2, i*2)"
+                :key="project.name"
+                class="bg-white border p-4 rounded-lg shadow-md project-hover project-card"
               >
-                {{ project.name }}
-              </h3>
-              <p class="text-xs sm:text-sm mb-2 sm:mb-3" :style="{ color: theme.textBody }">
-                {{ project.description }}
-              </p>
-              <a
-                :href="project.link"
-                class="font-medium text-xs sm:text-sm"
-                :style="{ color: theme.accent }"
-                >View on GitHub</a
-              >
+                <h3
+                  class="text-lg sm:text-xl font-semibold mb-2 truncate"
+                  :style="{ color: theme.textPrimary }"
+                >
+                  {{ project.name }}
+                </h3>
+                <p
+                  class="text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-3"
+                  :style="{ color: theme.textBody }"
+                >
+                  {{ project.description }}
+                </p>
+                <a
+                  :href="project.link"
+                  class="font-medium text-xs sm:text-sm"
+                  :style="{ color: theme.accent }"
+                  >View on GitHub</a
+                >
+              </div>
             </div>
           </div>
         </section>
-        <!-- Contact section -->
-        <section class="mb-10 sm:mb-12" id="contact">
+        <!-- Skills section with categorized skill cards, 2 per column, horizontal scrolling -->
+        <section id="skills" class="content-container">
+          <h2
+            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
+            :style="{ color: theme.textPrimary }"
+          >
+            Skills
+          </h2>
+          <div class="skills-scroll">
+            <div
+              v-for="i in Math.ceil(config.skillCategories.length / 2)"
+              :key="i"
+              class="skill-column"
+            >
+              <div
+                v-for="category in config.skillCategories.slice((i-1)*2, i*2)"
+                :key="category.name"
+                class="skill-card card-hover"
+              >
+                <h4
+                  class="text-lg sm:text-xl font-semibold mb-2"
+                  :style="{ color: theme.textPrimary }"
+                >
+                  {{ category.name }}
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="skill in category.skills"
+                    :style="{ backgroundColor: theme.skillBg }"
+                    class="text-blue-800 text-center py-1 px-2 rounded-lg font-medium text-xs sm:text-sm hover:bg-blue-200 transition"
+                    >{{ skill }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Contact section (contains cards and copyright bar) -->
+        <section id="contact" class="content-container">
           <h2
             class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
             :style="{ color: theme.textPrimary }"
           >
             Contact
           </h2>
-          <p class="text-sm sm:text-base mb-3" :style="{ color: theme.textBody }">
-            {{ config.contact.text }}
-          </p>
-          <div class="flex flex-wrap gap-3 sm:gap-4">
-            <a
-              v-for="contact in config.contact.links"
-              :href="contact.url"
-              class="font-medium text-xs sm:text-sm"
-              :style="{ color: theme.accent }"
-              >{{ contact.name }}</a
-            >
+          <!-- Cards container: vertical on iPhone (below sm), horizontal on iPad/web (sm and above) -->
+          <div class="flex flex-col sm:flex-row gap-4 max-w-md">
+            <!-- GitHub Profile Card -->
+            <transition name="fade">
+              <a :href="'https://github.com/' + config.githubUsername" class="block">
+                <div
+                  class="bg-white p-3 rounded-lg shadow-md card-hover cursor-pointer contact-card flex items-center"
+                >
+                  <div class="flex items-center space-x-2">
+                    <img
+                      :src="'https://github.com/' + config.githubUsername + '.png'"
+                      alt="GitHub Avatar"
+                      class="w-10 h-10 rounded-full"
+                    />
+                    <div class="overflow-hidden">
+                      <p class="text-sm font-semibold truncate" :style="{ color: theme.textBody }">
+                        @{{ config.githubUsername }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </transition>
+            <!-- Email Contact Card -->
+            <transition name="fade">
+              <a :href="'mailto:' + config.contact.email" class="block">
+                <div
+                  class="bg-white p-3 rounded-lg shadow-md card-hover cursor-pointer contact-card flex items-center"
+                >
+                  <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                      />
+                    </svg>
+                    <div class="overflow-hidden">
+                      <p class="text-sm font-semibold truncate" :style="{ color: theme.textBody }">
+                        {{ config.contact.email }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </transition>
+          </div>
+          <!-- Copyright bar at the bottom of the Contact section -->
+          <div
+            class="footer-bar"
+            :style="{ backgroundColor: theme.secondaryBg, color: theme.textSecondary }"
+          >
+            <p class="text-xs sm:text-sm p-4 text-center">
+              © {{ new Date().getFullYear() }}
+              <a
+                href="https://github.com/latefinal"
+                :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
+                >{{ config.footer.author }}</a
+              >
+              | {{ config.footer.credit }}
+            </p>
           </div>
         </section>
       </main>
-      <!-- Footer with author and credit -->
-      <footer
-        :style="{ backgroundColor: theme.secondaryBg, color: theme.textSecondary }"
-        class="p-4 sm:p-6 text-center"
-      >
-        <p class="text-xs sm:text-sm">
-          © {{ new Date().getFullYear() }}
-          <a
-            href="https://github.com/latefinal"
-            :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
-            >{{ config.footer.author }}</a
-          >
-          | {{ config.footer.credit }}
-        </p>
-      </footer>
     </div>
 
     <script>
@@ -186,16 +399,20 @@
       createApp({
         data() {
           return {
-            // Global config for all content
+            // State for mobile menu toggle (no longer used)
+            isMenuOpen: false,
+            // State to track the current section
+            currentSection: '',
+            // Global config for content
             config: {
-              title: "Andrew's Coding Portfolio",
+              githubUsername: 'latefinal', // GitHub username for avatar
+              title: "Andrew's Portfolio",
+              profile: {},
               navLinks: [
-                { name: 'Home', url: '#' },
                 { name: 'About', url: '#about' },
-                { name: 'Skills', url: '#skills' },
                 { name: 'Projects', url: '#projects' },
+                { name: 'Skills', url: '#skills' },
                 { name: 'Contact', url: '#contact' },
-                { name: 'GitHub', url: 'https://github.com/latefinal' },
               ],
               about: [
                 "Hi, I'm Andrew, a coder based in Canada. I'm passionate about building software that solves real-world problems, with a focus on JavaScript and frameworks like Vue.js.",
@@ -240,12 +457,7 @@
                 },
               ],
               contact: {
-                text: 'Interested in collaborating or learning more about my work? Reach out through the links below.',
-                links: [
-                  { name: 'GitHub', url: 'https://github.com/latefinal' },
-                  { name: 'Email', url: 'mailto:andrew@example.com' },
-                  { name: 'LinkedIn', url: 'https://linkedin.com/in/andrew-latefinal' },
-                ],
+                email: 'andrew@example.com', // Email for contact card
               },
               footer: {
                 author: 'Andrew (latefinal)',
@@ -254,7 +466,7 @@
             },
             // Global theme for styling
             theme: {
-              primaryBg: 'linear-gradient(to right, #1E40AF, #3B82F6)', // Header gradient
+              primaryBg: 'linear-gradient(to right, #1E40AF, #3B82F6)', // Header gradient (no longer used)
               secondaryBg: '#1F2937', // Footer bg
               bg: '#F3F4F6', // Page bg
               textPrimary: '#1F2937', // Headings
@@ -265,6 +477,28 @@
               skillBg: '#DBEAFE', // Skill badges
             },
           }
+        },
+        mounted() {
+          // Set initial section based on current scroll position
+          const sections = document.querySelectorAll('section')
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const sectionId = entry.target.id
+                  this.currentSection = sectionId
+                }
+              })
+            },
+            { root: this.$refs.main, threshold: 0.5 }, // Trigger when 50% of section is visible
+          )
+
+          // Observe each section
+          sections.forEach((section) => observer.observe(section))
+
+          // Set initial section on load
+          const initialSection = sections[0].id
+          this.currentSection = initialSection
         },
       }).mount('#app')
     </script>
