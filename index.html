@@ -1,19 +1,24 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Meta tags for character encoding and responsive viewport -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Andrew's Coding Portfolio</title>
+    <title>{{ config.title }}</title>
+    <!-- Vue.js CDN for reactivity -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Tailwind CSS for styling -->
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <!-- Google Fonts for Inter and Poppins -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <style>
+      /* Base font styles */
       body {
         font-family:
           system-ui,
@@ -24,10 +29,12 @@
       }
       h1,
       h2,
-      h3 {
+      h3,
+      h4 {
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
       }
+      /* Hover effect for project cards */
       .project-hover:hover {
         transform: scale(1.02);
         transition: transform 0.2s ease;
@@ -35,157 +42,228 @@
     </style>
   </head>
   <body>
-    <div id="app" class="min-h-screen bg-gray-100">
+    <!-- Main app container with Vue binding -->
+    <div id="app" class="min-h-screen" :style="{ backgroundColor: theme.bg }">
+      <!-- Header with navigation and Beta flag -->
       <header
-        class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-4 shadow-lg sticky top-0 z-10"
+        :style="{ background: theme.primaryBg, color: theme.textSecondary }"
+        class="p-4 shadow-lg sticky top-0 z-10"
       >
         <div class="container mx-auto flex flex-col items-center sm:flex-row sm:justify-between">
           <div class="flex items-center space-x-3 mb-3 sm:mb-0">
-            <h1 class="text-2xl sm:text-3xl font-bold">{{ title }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold">{{ config.title }}</h1>
             <span
               class="bg-yellow-400 text-gray-800 text-xs sm:text-sm font-medium px-2 py-1 rounded-full"
               >Beta</span
             >
           </div>
+          <!-- Navigation links -->
           <nav class="flex flex-wrap justify-center gap-2 sm:gap-4">
             <a
-              v-for="link in navLinks"
+              v-for="link in config.navLinks"
               :href="link.url"
-              class="text-sm sm:text-base font-medium hover:text-blue-200 transition"
+              class="text-sm sm:text-base font-medium"
+              :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
               >{{ link.name }}</a
             >
           </nav>
         </div>
       </header>
+      <!-- Main content area -->
       <main class="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+        <!-- About section -->
         <section class="mb-10 sm:mb-12" id="about">
-          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">About Me</h2>
-          <p class="text-gray-700 text-sm sm:text-base leading-relaxed mb-3">{{ about }}</p>
-          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
-            I specialize in creating user-friendly applications with modern JavaScript frameworks.
-            My goal is to write clean, efficient code while continuously learning new technologies.
-            This portfolio was crafted with assistance from Grok by xAI, helping me focus on
-            showcasing my projects effectively.
+          <h2
+            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
+            :style="{ color: theme.textPrimary }"
+          >
+            About Me
+          </h2>
+          <p
+            v-for="paragraph in config.about"
+            class="text-sm sm:text-base leading-relaxed mb-3"
+            :style="{ color: theme.textBody }"
+          >
+            {{ paragraph }}
           </p>
         </section>
+        <!-- Skills section with categorized skills -->
         <section class="mb-10 sm:mb-12" id="skills">
-          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">Skills</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
-            <span
-              v-for="skill in skills"
-              class="bg-blue-100 text-blue-800 text-center py-2 rounded-lg font-medium text-xs sm:text-sm hover:bg-blue-200 transition"
-              >{{ skill }}</span
-            >
+          <h2
+            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
+            :style="{ color: theme.textPrimary }"
+          >
+            Skills
+          </h2>
+          <div v-for="category in config.skillCategories" :key="category.name" class="mb-6">
+            <h4 class="text-lg sm:text-xl font-semibold mb-2" :style="{ color: theme.textPrimary }">
+              {{ category.name }}
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+              <span
+                v-for="skill in category.skills"
+                :style="{ backgroundColor: theme.skillBg }"
+                class="text-blue-800 text-center py-2 rounded-lg font-medium text-xs sm:text-sm hover:bg-blue-200 transition"
+                >{{ skill }}</span
+              >
+            </div>
           </div>
         </section>
+        <!-- Projects section with cards -->
         <section class="mb-10 sm:mb-12" id="projects">
-          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">Projects</h2>
+          <h2
+            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
+            :style="{ color: theme.textPrimary }"
+          >
+            Projects
+          </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div
-              v-for="project in projects"
+              v-for="project in config.projects"
               class="bg-white border p-4 sm:p-5 rounded-lg shadow-md project-hover"
             >
-              <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
+              <h3
+                class="text-lg sm:text-xl font-semibold mb-2"
+                :style="{ color: theme.textPrimary }"
+              >
                 {{ project.name }}
               </h3>
-              <p class="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3">{{ project.description }}</p>
+              <p class="text-xs sm:text-sm mb-2 sm:mb-3" :style="{ color: theme.textBody }">
+                {{ project.description }}
+              </p>
               <a
                 :href="project.link"
-                class="text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm"
+                class="font-medium text-xs sm:text-sm"
+                :style="{ color: theme.accent }"
                 >View on GitHub</a
               >
             </div>
           </div>
         </section>
+        <!-- Contact section -->
         <section class="mb-10 sm:mb-12" id="contact">
-          <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-800">Contact</h2>
-          <p class="text-gray-700 text-sm sm:text-base mb-3">
-            Interested in collaborating or learning more about my work? Reach out through the links
-            below.
+          <h2
+            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
+            :style="{ color: theme.textPrimary }"
+          >
+            Contact
+          </h2>
+          <p class="text-sm sm:text-base mb-3" :style="{ color: theme.textBody }">
+            {{ config.contact.text }}
           </p>
           <div class="flex flex-wrap gap-3 sm:gap-4">
             <a
-              v-for="contact in contacts"
+              v-for="contact in config.contact.links"
               :href="contact.url"
-              class="text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm"
+              class="font-medium text-xs sm:text-sm"
+              :style="{ color: theme.accent }"
               >{{ contact.name }}</a
             >
           </div>
         </section>
       </main>
-      <footer class="bg-gray-900 text-white p-4 sm:p-6 text-center">
+      <!-- Footer with author and credit -->
+      <footer
+        :style="{ backgroundColor: theme.secondaryBg, color: theme.textSecondary }"
+        class="p-4 sm:p-6 text-center"
+      >
         <p class="text-xs sm:text-sm">
           © {{ new Date().getFullYear() }}
-          <a href="https://github.com/latefinal" class="hover:text-blue-300">Andrew (latefinal)</a>
-          | Built with help from Grok by xAI
+          <a
+            href="https://github.com/latefinal"
+            :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
+            >{{ config.footer.author }}</a
+          >
+          | {{ config.footer.credit }}
         </p>
       </footer>
     </div>
 
     <script>
+      // Initialize Vue app
       const { createApp } = Vue
 
       createApp({
         data() {
           return {
-            title: "Andrew's Coding Portfolio",
-            navLinks: [
-              { name: 'Home', url: '#' },
-              { name: 'About', url: '#about' },
-              { name: 'Skills', url: '#skills' },
-              { name: 'Projects', url: '#projects' },
-              { name: 'Contact', url: '#contact' },
-              { name: 'GitHub', url: 'https://github.com/latefinal' },
-            ],
-            about:
-              "Hi, I'm Andrew, a coder based in Canada. I'm passionate about building software that solves real-world problems, with a focus on JavaScript and frameworks like Vue.js. My journey in coding started with a curiosity for technology, and I've since been honing my skills in web development.",
-            skills: [
-              'JavaScript',
-              'Vue.js',
-              'Tailwind CSS',
-              'HTML/CSS',
-              'Node.js',
-              'REST APIs',
-              'Git',
-              'Python',
-            ],
-            projects: [
-              {
-                name: 'Task Manager App',
-                description:
-                  'A Vue.js-based task management app with features to add, edit, and delete tasks, styled with Tailwind CSS for a sleek UI.',
-                link: 'https://github.com/latefinal',
+            // Global config for all content
+            config: {
+              title: "Andrew's Coding Portfolio",
+              navLinks: [
+                { name: 'Home', url: '#' },
+                { name: 'About', url: '#about' },
+                { name: 'Skills', url: '#skills' },
+                { name: 'Projects', url: '#projects' },
+                { name: 'Contact', url: '#contact' },
+                { name: 'GitHub', url: 'https://github.com/latefinal' },
+              ],
+              about: [
+                "Hi, I'm Andrew, a coder based in Canada. I'm passionate about building software that solves real-world problems, with a focus on JavaScript and frameworks like Vue.js.",
+                "My journey in coding started with a curiosity for technology, and I've since been honing my skills in web development. I specialize in creating user-friendly applications with modern JavaScript frameworks. My goal is to write clean, efficient code while continuously learning new technologies. This portfolio was crafted with assistance from Grok by xAI, helping me focus on showcasing my projects effectively.",
+              ],
+              skillCategories: [
+                { name: 'Languages', skills: ['Dart', 'Java', 'JavaScript', 'Swift'] },
+                { name: 'Frameworks', skills: ['Flutter', 'Vue.js'] },
+                { name: 'Tools', skills: ['Android Studio', 'Git', 'Xcode'] },
+                { name: 'Services', skills: ['API', 'Firebase'] },
+              ],
+              projects: [
+                {
+                  name: 'Task Manager App',
+                  description:
+                    'A Vue.js-based task management app with features to add, edit, and delete tasks, styled with Tailwind CSS for a sleek UI.',
+                  link: 'https://github.com/latefinal',
+                },
+                {
+                  name: 'Weather Dashboard',
+                  description:
+                    'A JavaScript app that fetches real-time weather data using a public API, displaying conditions with a responsive design.',
+                  link: 'https://github.com/latefinal',
+                },
+                {
+                  name: 'Note Taker',
+                  description:
+                    'A minimal note-taking app using Vue.js, with local storage to save notes and a clean, user-friendly interface.',
+                  link: 'https://github.com/latefinal',
+                },
+                {
+                  name: 'E-Commerce Mockup',
+                  description:
+                    'A front-end prototype for an online store, built with Vue.js and Tailwind CSS, featuring product listings and a cart system.',
+                  link: 'https://github.com/latefinal',
+                },
+                {
+                  name: 'Chat App',
+                  description:
+                    'A simple real-time chat application using Node.js and WebSockets, with a Vue.js front-end for seamless messaging.',
+                  link: 'https://github.com/latefinal',
+                },
+              ],
+              contact: {
+                text: 'Interested in collaborating or learning more about my work? Reach out through the links below.',
+                links: [
+                  { name: 'GitHub', url: 'https://github.com/latefinal' },
+                  { name: 'Email', url: 'mailto:andrew@example.com' },
+                  { name: 'LinkedIn', url: 'https://linkedin.com/in/andrew-latefinal' },
+                ],
               },
-              {
-                name: 'Weather Dashboard',
-                description:
-                  'A JavaScript app that fetches real-time weather data using a public API, displaying conditions with a responsive design.',
-                link: 'https://github.com/latefinal',
+              footer: {
+                author: 'Andrew (latefinal)',
+                credit: 'Built with help from Grok by xAI',
               },
-              {
-                name: 'Note Taker',
-                description:
-                  'A minimal note-taking app using Vue.js, with local storage to save notes and a clean, user-friendly interface.',
-                link: 'https://github.com/latefinal',
-              },
-              {
-                name: 'E-Commerce Mockup',
-                description:
-                  'A front-end prototype for an online store, built with Vue.js and Tailwind CSS, featuring product listings and a cart system.',
-                link: 'https://github.com/latefinal',
-              },
-              {
-                name: 'Chat App',
-                description:
-                  'A simple real-time chat application using Node.js and WebSockets, with a Vue.js front-end for seamless messaging.',
-                link: 'https://github.com/latefinal',
-              },
-            ],
-            contacts: [
-              { name: 'GitHub', url: 'https://github.com/latefinal' },
-              { name: 'Email', url: 'mailto:andrew@example.com' },
-              { name: 'LinkedIn', url: 'https://linkedin.com/in/andrew-latefinal' },
-            ],
+            },
+            // Global theme for styling
+            theme: {
+              primaryBg: 'linear-gradient(to right, #1E40AF, #3B82F6)', // Header gradient
+              secondaryBg: '#1F2937', // Footer bg
+              bg: '#F3F4F6', // Page bg
+              textPrimary: '#1F2937', // Headings
+              textSecondary: '#F3F4F6', // Header/footer text
+              textBody: '#1F2937', // Main body text
+              accent: '#2563EB', // Links
+              linkHover: '#DBEAFE', // Nav/footer link hover
+              skillBg: '#DBEAFE', // Skill badges
+            },
           }
         },
       }).mount('#app')
