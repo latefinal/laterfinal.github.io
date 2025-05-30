@@ -1,0 +1,26 @@
+# Vue.js
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+/build/
+/coverage/
+
+# Misc
+.env
+*.log
