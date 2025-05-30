@@ -1,272 +1,305 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Meta tags for character encoding and responsive viewport -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <!-- Meta tags for encoding and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config.title }}</title>
     <!-- Vue.js CDN for reactivity -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- Tailwind CSS for styling -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Google Fonts for Inter and Poppins -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
-      /* Base font styles */
-      body {
-        font-family:
-          system-ui,
-          -apple-system,
-          'Inter',
-          sans-serif;
-        font-weight: 400;
-      }
-      h1,
-      h2,
-      h3,
-      h4 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-      }
-      /* Hover effect for project cards */
-      .project-hover:hover {
-        transform: scale(1.02);
-        transition: transform 0.2s ease;
-      }
+        /* Base font styles and background matching the first section */
+        body { 
+            font-family: system-ui, -apple-system, 'Inter', sans-serif; 
+            font-weight: 400; 
+            margin: 0; 
+            overflow-x: hidden; 
+            background: linear-gradient(to right, #f0f4ff, #d0d9ff); /* Matches About section gradient */
+        }
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; font-weight: 700; }
+        /* Hover effects for project and profile cards */
+        .project-hover:hover, .card-hover:hover { transform: scale(1.05); transition: transform 0.2s ease; }
+        /* Animation for cards */
+        .fade-enter-active { transition: opacity 0.5s ease; }
+        .fade-enter-from { opacity: 0; }
+        /* Hover effect for icon buttons */
+        .icon-button:hover { background-color: #DBEAFE; transform: scale(1.1); transition: all 0.2s ease; }
+        /* Active state for navigation buttons */
+        .icon-button.active { background-color: #DBEAFE; }
+        /* Full-screen sections with snap scrolling */
+        main { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
+        section { scroll-snap-align: start; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding: 1.5rem; /* 24px horizontal padding */ }
+        /* Footer bar style within Contact section, fixed at the bottom */
+        .footer-bar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; }
+        /* Prevent horizontal overflow in content containers */
+        .content-container { max-width: 100%; overflow-x: hidden; }
+        /* Center section content vertically, align left horizontally (excluding footer bar) */
+        .section-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: flex-start; 
+            width: 100%; 
+        }
+        /* Horizontal scrolling for projects with hidden scrollbar and dynamic fade-out */
+        .projects-scroll { 
+            display: flex; 
+            flex-direction: row; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            width: 100%; 
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+            gap: 1rem; /* Synchronized spacing between columns to match Contact */
+        }
+        .projects-scroll::-webkit-scrollbar { 
+            display: none; /* Chrome, Safari, Opera */
+        }
+        .project-column { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1rem; /* Synchronized spacing within columns to match Contact */
+            min-width: 300px; 
+            scroll-snap-align: start; 
+            padding-bottom: 1rem; /* Prevent bottom shadow clipping */
+        }
+        /* Fixed size and style for project cards */
+        .project-card { 
+            height: 12rem; /* h-48 */
+            width: 18rem; /* w-72 */
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Style for contact cards, smaller size */
+        .contact-card { 
+            height: 6rem; /* h-24 */
+            width: 14rem; /* w-56 */
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
-  </head>
-  <body>
-    <!-- Main app container with Vue binding -->
-    <div id="app" class="min-h-screen" :style="{ backgroundColor: theme.bg }">
-      <!-- Header with navigation and Beta flag -->
-      <header
-        :style="{ background: theme.primaryBg, color: theme.textSecondary }"
-        class="p-4 shadow-lg sticky top-0 z-10"
-      >
-        <div class="container mx-auto flex flex-col items-center sm:flex-row sm:justify-between">
-          <div class="flex items-center space-x-3 mb-3 sm:mb-0">
-            <h1 class="text-2xl sm:text-3xl font-bold">{{ config.title }}</h1>
-            <span
-              class="bg-yellow-400 text-gray-800 text-xs sm:text-sm font-medium px-2 py-1 rounded-full"
-              >Beta</span
-            >
-          </div>
-          <!-- Navigation links -->
-          <nav class="flex flex-wrap justify-center gap-2 sm:gap-4">
-            <a
-              v-for="link in config.navLinks"
-              :href="link.url"
-              class="text-sm sm:text-base font-medium"
-              :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
-              >{{ link.name }}</a
-            >
-          </nav>
-        </div>
-      </header>
-      <!-- Main content area -->
-      <main class="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
-        <!-- About section -->
-        <section class="mb-10 sm:mb-12" id="about">
-          <h2
-            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
-            :style="{ color: theme.textPrimary }"
-          >
-            About Me
-          </h2>
-          <p
-            v-for="paragraph in config.about"
-            class="text-sm sm:text-base leading-relaxed mb-3"
-            :style="{ color: theme.textBody }"
-          >
-            {{ paragraph }}
-          </p>
-        </section>
-        <!-- Skills section with categorized skills -->
-        <section class="mb-10 sm:mb-12" id="skills">
-          <h2
-            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
-            :style="{ color: theme.textPrimary }"
-          >
-            Skills
-          </h2>
-          <div v-for="category in config.skillCategories" :key="category.name" class="mb-6">
-            <h4 class="text-lg sm:text-xl font-semibold mb-2" :style="{ color: theme.textPrimary }">
-              {{ category.name }}
-            </h4>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
-              <span
-                v-for="skill in category.skills"
-                :style="{ backgroundColor: theme.skillBg }"
-                class="text-blue-800 text-center py-2 rounded-lg font-medium text-xs sm:text-sm hover:bg-blue-200 transition"
-                >{{ skill }}</span
-              >
-            </div>
-          </div>
-        </section>
-        <!-- Projects section with cards -->
-        <section class="mb-10 sm:mb-12" id="projects">
-          <h2
-            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
-            :style="{ color: theme.textPrimary }"
-          >
-            Projects
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div
-              v-for="project in config.projects"
-              class="bg-white border p-4 sm:p-5 rounded-lg shadow-md project-hover"
-            >
-              <h3
-                class="text-lg sm:text-xl font-semibold mb-2"
-                :style="{ color: theme.textPrimary }"
-              >
-                {{ project.name }}
-              </h3>
-              <p class="text-xs sm:text-sm mb-2 sm:mb-3" :style="{ color: theme.textBody }">
-                {{ project.description }}
-              </p>
-              <a
-                :href="project.link"
-                class="font-medium text-xs sm:text-sm"
-                :style="{ color: theme.accent }"
-                >View on GitHub</a
-              >
-            </div>
-          </div>
-        </section>
-        <!-- Contact section -->
-        <section class="mb-10 sm:mb-12" id="contact">
-          <h2
-            class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
-            :style="{ color: theme.textPrimary }"
-          >
-            Contact
-          </h2>
-          <p class="text-sm sm:text-base mb-3" :style="{ color: theme.textBody }">
-            {{ config.contact.text }}
-          </p>
-          <div class="flex flex-wrap gap-3 sm:gap-4">
-            <a
-              v-for="contact in config.contact.links"
-              :href="contact.url"
-              class="font-medium text-xs sm:text-sm"
-              :style="{ color: theme.accent }"
-              >{{ contact.name }}</a
-            >
-          </div>
-        </section>
-      </main>
-      <!-- Footer with author and credit -->
-      <footer
-        :style="{ backgroundColor: theme.secondaryBg, color: theme.textSecondary }"
-        class="p-4 sm:p-6 text-center"
-      >
-        <p class="text-xs sm:text-sm">
-          © {{ new Date().getFullYear() }}
-          <a
-            href="https://github.com/latefinal"
-            :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }"
-            >{{ config.footer.author }}</a
-          >
-          | {{ config.footer.credit }}
-        </p>
-      </footer>
+</head>
+<body>
+    <!-- Main app container -->
+    <div id="app" class="min-h-screen">
+        <!-- Navigation: Icon buttons in a vertical column on the right-middle -->
+        <nav class="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-4">
+            <a v-for="link in config.navLinks" :href="link.url" @click.prevent="scrollToSection(link.url)" class="icon-button p-2 rounded-full bg-white bg-opacity-80 shadow-md" :class="{ 'active': currentSection === link.url.slice(1) }" :style="{ color: theme.textPrimary }">
+                <svg v-if="link.name === 'About'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <svg v-if="link.name === 'Projects'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                </svg>
+                <svg v-if="link.name === 'Contact'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+            </a>
+        </nav>
+        <!-- Main content area -->
+        <main ref="main">
+            <!-- About section with gradient background -->
+            <section id="about" class="content-container" :style="{ background: 'linear-gradient(to right, #f0f4ff, #d0d9ff)' }">
+                <div class="section-content">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4" :style="{ color: theme.textPrimary }">About Me</h2>
+                    <p v-for="paragraph in config.about" class="text-sm sm:text-base leading-relaxed mb-3" :style="{ color: theme.textBody }">{{ paragraph }}</p>
+                </div>
+            </section>
+            <!-- Projects section with gradient background -->
+            <section id="projects" class="content-container" :style="{ background: 'linear-gradient(to right, #e0f7fa, #b2ebf2)' }">
+                <div class="section-content">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4" :style="{ color: theme.textPrimary }">Projects</h2>
+                    <div class="projects-scroll" ref="projectsScroll" :style="{
+                        maskImage: isProjectsScrolled ? 
+                            (isAtEnd ? 
+                                'linear-gradient(to right, transparent 0%, black 10%, black 100%)' : 
+                                'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)') : 
+                            (isAtEnd ? 
+                                'linear-gradient(to right, black 0%, black 100%)' : 
+                                'linear-gradient(to right, black 0%, black 90%, transparent 100%)')
+                    }">
+                        <div v-for="i in Math.ceil(config.projects.length / 2)" :key="i" class="project-column">
+                            <div v-for="project in config.projects.slice((i-1)*2, i*2)" :key="project.name">
+                                <a :href="project.link" class="block">
+                                    <div class="project-hover project-card">
+                                        <h3 class="text-xl font-semibold mb-2 truncate" :style="{ color: theme.textPrimary }">{{ project.name }}</h3>
+                                        <p class="text-sm mb-2 line-clamp-3" :style="{ color: theme.textBody }">{{ project.description }}</p>
+                                        <span class="font-medium text-sm" :style="{ color: theme.accent }">View on GitHub</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Contact section with gradient background, ensuring footer bar color extends below -->
+            <section id="contact" class="content-container" :style="{ background: 'linear-gradient(to right, #f1f8e9, #c8e6c9)' }">
+                <div class="section-content">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4" :style="{ color: theme.textPrimary }">Contact</h2>
+                    <!-- Cards container: vertical on iPhone (below sm), horizontal on iPad/web (sm and above) -->
+                    <div class="flex flex-col sm:flex-row gap-4 max-w-md">
+                        <!-- GitHub Profile Card -->
+                        <transition name="fade">
+                            <a :href="'https://github.com/' + config.githubUsername" class="block">
+                                <div class="card-hover contact-card flex items-center">
+                                    <div class="flex items-start gap-2">
+                                        <img :src="'https://github.com/' + config.githubUsername + '.png'" alt="GitHub Avatar" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="text-lg font-semibold" :style="{ color: theme.textPrimary }">GitHub</p>
+                                            <p class="text-sm" :style="{ color: theme.textBody }">@{{ config.githubUsername }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </transition>
+                        <!-- Email Contact Card -->
+                        <transition name="fade">
+                            <a :href="'mailto:' + config.contact.email" class="block">
+                                <div class="card-hover contact-card flex items-center">
+                                    <div class="flex items-start gap-2">
+                                        <svg class="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm16 3.586V6H4v1.586l8 4 8-4zm0 1.828L12 13.414l-8-4V18h16V9.414z"/>
+                                        </svg>
+                                        <div>
+                                            <p class="text-lg font-semibold" :style="{ color: theme.textPrimary }">Email</p>
+                                            <p class="text-sm" :style="{ color: theme.textBody }">{{ config.contact.email }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </transition>
+                    </div>
+                </div>
+                <!-- Copyright bar at the bottom of the Contact section, color extends below -->
+                <div class="footer-bar" :style="{ backgroundColor: theme.secondaryBg, color: theme.textSecondary }">
+                    <p class="text-xs sm:text-sm p-4 pb-2 text-center">© {{ new Date().getFullYear() }} <a href="https://github.com/latefinal" :style="{ color: theme.textSecondary, ':hover': { color: theme.linkHover } }">{{ config.footer.author }}</a> | {{ config.footer.credit }}</p>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script>
-      // Initialize Vue app
-      const { createApp } = Vue
+        // Initialize Vue app
+        const { createApp } = Vue;
 
-      createApp({
-        data() {
-          return {
-            // Global config for all content
-            config: {
-              title: "Andrew's Coding Portfolio",
-              navLinks: [
-                { name: 'Home', url: '#' },
-                { name: 'About', url: '#about' },
-                { name: 'Skills', url: '#skills' },
-                { name: 'Projects', url: '#projects' },
-                { name: 'Contact', url: '#contact' },
-                { name: 'GitHub', url: 'https://github.com/latefinal' },
-              ],
-              about: [
-                "Hi, I'm Andrew, a coder based in Canada. I'm passionate about building software that solves real-world problems, with a focus on JavaScript and frameworks like Vue.js.",
-                "My journey in coding started with a curiosity for technology, and I've since been honing my skills in web development. I specialize in creating user-friendly applications with modern JavaScript frameworks. My goal is to write clean, efficient code while continuously learning new technologies. This portfolio was crafted with assistance from Grok by xAI, helping me focus on showcasing my projects effectively.",
-              ],
-              skillCategories: [
-                { name: 'Languages', skills: ['Dart', 'Java', 'JavaScript', 'Swift'] },
-                { name: 'Frameworks', skills: ['Flutter', 'Vue.js'] },
-                { name: 'Tools', skills: ['Android Studio', 'Git', 'Xcode'] },
-                { name: 'Services', skills: ['API', 'Firebase'] },
-              ],
-              projects: [
-                {
-                  name: 'Task Manager App',
-                  description:
-                    'A Vue.js-based task management app with features to add, edit, and delete tasks, styled with Tailwind CSS for a sleek UI.',
-                  link: 'https://github.com/latefinal',
-                },
-                {
-                  name: 'Weather Dashboard',
-                  description:
-                    'A JavaScript app that fetches real-time weather data using a public API, displaying conditions with a responsive design.',
-                  link: 'https://github.com/latefinal',
-                },
-                {
-                  name: 'Note Taker',
-                  description:
-                    'A minimal note-taking app using Vue.js, with local storage to save notes and a clean, user-friendly interface.',
-                  link: 'https://github.com/latefinal',
-                },
-                {
-                  name: 'E-Commerce Mockup',
-                  description:
-                    'A front-end prototype for an online store, built with Vue.js and Tailwind CSS, featuring product listings and a cart system.',
-                  link: 'https://github.com/latefinal',
-                },
-                {
-                  name: 'Chat App',
-                  description:
-                    'A simple real-time chat application using Node.js and WebSockets, with a Vue.js front-end for seamless messaging.',
-                  link: 'https://github.com/latefinal',
-                },
-              ],
-              contact: {
-                text: 'Interested in collaborating or learning more about my work? Reach out through the links below.',
-                links: [
-                  { name: 'GitHub', url: 'https://github.com/latefinal' },
-                  { name: 'Email', url: 'mailto:andrew@example.com' },
-                  { name: 'LinkedIn', url: 'https://linkedin.com/in/andrew-latefinal' },
-                ],
-              },
-              footer: {
-                author: 'Andrew (latefinal)',
-                credit: 'Built with help from Grok by xAI',
-              },
+        createApp({
+            data() {
+                return {
+                    // State for mobile menu toggle (no longer used)
+                    isMenuOpen: false,
+                    // State to track the current section
+                    currentSection: '',
+                    // State to track if Projects section is scrolled
+                    isProjectsScrolled: false,
+                    // State to track if Projects section is scrolled to the end
+                    isAtEnd: false,
+                    // Global config for content
+                    config: {
+                        githubUsername: 'latefinal', // GitHub username for avatar
+                        title: "Portfolio",
+                        profile: {},
+                        navLinks: [
+                            { name: 'About', url: '#about' },
+                            { name: 'Projects', url: '#projects' },
+                            { name: 'Contact', url: '#contact' }
+                        ],
+                        about: [
+                            "I’m a self-proclaimed space pirate coding from the moon! I used Grok to build this website because I needed a trusty AI sidekick to help me navigate the cosmic chaos of web development while I battled alien bugs in my code.",
+                            "Grok, created by xAI, is a brilliant AI companion who kept me grounded while I aimed for the stars! With a knack for answering questions from a unique outside perspective on humanity, Grok helped me craft this portfolio with JavaScript, Vue.js, and a sprinkle of stardust, ensuring my intergalactic web apps shine bright!"
+                        ],
+                        projects: [
+                            { name: 'Task Manager App', description: 'A Vue.js-based task management app with features to add, edit, and delete tasks, styled with Tailwind CSS for a sleek UI.', link: 'https://github.com/latefinal' },
+                            { name: 'Weather Dashboard', description: 'A JavaScript app that fetches real-time weather data using a public API, displaying conditions with a responsive design.', link: 'https://github.com/latefinal' },
+                            { name: 'Note Taker', description: 'A minimal note-taking app using Vue.js, with local storage to save notes and a clean, user-friendly interface.', link: 'https://github.com/latefinal' },
+                            { name: 'E-Commerce Mockup', description: 'A front-end prototype for an online store, built with Vue.js and Tailwind CSS, featuring product listings and a cart system.', link: 'https://github.com/latefinal' },
+                            { name: 'Chat App', description: 'A simple real-time chat application using Node.js and WebSockets, with a Vue.js front-end for seamless messaging.', link: 'https://github.com/latefinal' }
+                        ],
+                        contact: {
+                            email: 'andrew@example.com' // Email for contact card
+                        },
+                        footer: {
+                            author: 'latefinal',
+                            credit: 'Built with help from Grok by xAI'
+                        }
+                    },
+                    // Global theme for styling
+                    theme: {
+                        primaryBg: 'linear-gradient(to right, #1E40AF, #3B82F6)', // Header gradient (no longer used)
+                        secondaryBg: '#1F2937', // Footer bg
+                        textPrimary: '#1F2937', // Headings
+                        textSecondary: '#F3F4F6', // Header/footer text
+                        textBody: '#1F2937', // Main body text
+                        accent: '#2563EB', // Links
+                        linkHover: '#DBEAFE', // Nav/footer link hover
+                        skillBg: '#DBEAFE' // Skill badges (unused but retained in theme)
+                    }
+                };
             },
-            // Global theme for styling
-            theme: {
-              primaryBg: 'linear-gradient(to right, #1E40AF, #3B82F6)', // Header gradient
-              secondaryBg: '#1F2937', // Footer bg
-              bg: '#F3F4F6', // Page bg
-              textPrimary: '#1F2937', // Headings
-              textSecondary: '#F3F4F6', // Header/footer text
-              textBody: '#1F2937', // Main body text
-              accent: '#2563EB', // Links
-              linkHover: '#DBEAFE', // Nav/footer link hover
-              skillBg: '#DBEAFE', // Skill badges
+            methods: {
+                // Smooth scroll to section when navigation item is tapped
+                scrollToSection(url) {
+                    const sectionId = url.slice(1); // Remove the '#' from the URL
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
             },
-          }
-        },
-      }).mount('#app')
+            mounted() {
+                // Set initial section based on current scroll position
+                const sections = document.querySelectorAll('section');
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        let maxRatio = 0;
+                        let mostVisibleSection = null;
+
+                        // Find the section with the highest intersection ratio
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                                maxRatio = entry.intersectionRatio;
+                                mostVisibleSection = entry.target.id;
+                            }
+                        });
+
+                        // Only update currentSection if a section is clearly the most visible
+                        if (mostVisibleSection) {
+                            this.currentSection = mostVisibleSection;
+                        }
+                    },
+                    { root: this.$refs.main, threshold: [0.1, 0.5, 0.9] } // Multiple thresholds to track visibility
+                );
+
+                // Observe each section
+                sections.forEach(section => observer.observe(section));
+
+                // Set initial section on load
+                const initialSection = sections[0].id;
+                this.currentSection = initialSection;
+
+                // Add scroll event listener for Projects section
+                const projectsScroll = this.$refs.projectsScroll;
+                if (projectsScroll) {
+                    projectsScroll.addEventListener('scroll', () => {
+                        // Check if scrolled at all (for left fade-out)
+                        this.isProjectsScrolled = projectsScroll.scrollLeft > 0;
+                        // Check if scrolled to the end (for right fade-out)
+                        const maxScrollLeft = projectsScroll.scrollWidth - projectsScroll.clientWidth;
+                        this.isAtEnd = projectsScroll.scrollLeft >= maxScrollLeft - 1; // Small buffer for precision
+                    });
+                }
+            }
+        }).mount('#app');
     </script>
-  </body>
+</body>
 </html>
